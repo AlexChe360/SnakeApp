@@ -22,8 +22,9 @@ class SnakeView: UIView {
     private var positions: Array<Int>? = nil
     private var currentPosition: Int? = nil
     private var pressingPoint: CGPoint? = nil
-    private var flagSelector: ((Int) -> Void)?
     private var greenFlagPosition: Int = 0
+    
+    var flagSelector: ((Int) -> Void)?
     
     var isFinesh: Bool = false {
         didSet {
@@ -186,7 +187,6 @@ class SnakeView: UIView {
             if pressed.x > pos.1.x && pressed.x < pos.1.x + CGFloat(size)
                 && pressed.y > pos.1.y && pressed.y < pos.1.y + CGFloat(size) && pos.0 == greenFlagPosition {
                 flagSelector?(pos.0)
-                print("Hello")
                 pressingPoint = nil
             }
         }
