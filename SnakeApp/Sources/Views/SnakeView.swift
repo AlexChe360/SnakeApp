@@ -9,8 +9,8 @@ import UIKit
 
 class SnakeView: UIView {
     
-    private let path = UIBezierPath()
-    private let shapeLayer = CAShapeLayer()
+    private var path: UIBezierPath!
+    private var shapeLayer: CAShapeLayer!
     private var imageViewFlag: UIImageView!
     private var pathViewFlag: UIView!
     private var imageViewCastle: UIImageView!
@@ -23,12 +23,12 @@ class SnakeView: UIView {
     private var currentPosition: Int? = nil
     private var pressingPoint: CGPoint? = nil
     private var flagSelector: ((Int) -> Void)?
-    private var width: CGFloat = 0.0
-    private var height: CGFloat = 0.0
+    private var greenFlagPosition: Int = 0
     
     var isFinesh: Bool = false {
         didSet {
             hourseIsDone = isFinesh
+            setNeedsDisplay()
         }
     }
     
@@ -44,8 +44,22 @@ class SnakeView: UIView {
     
     override func draw(_ rect: CGRect) {
         
-        width = rect.width
-        height = rect.height
+        layer.sublayers = nil
+        
+        path = UIBezierPath()
+        shapeLayer = CAShapeLayer()
+        
+        let width = rect.width
+        let height = rect.height
+        
+        pathViewFlag = UIView(frame: CGRect(x: 0, y: 0, width: width * 0.08, height: width * 0.08))
+        addSubview(pathViewFlag)
+        
+        pathViewCastle = UIView(frame: CGRect(x: 0, y: 0, width: width * 0.08, height: width * 0.08))
+        addSubview(pathViewCastle)
+        
+        pathViewHourse = UIView(frame: CGRect(x: 0, y: 0, width: width * 0.08, height: width * 0.08))
+        addSubview(pathViewHourse)
         
         path.move(to: CGPoint(x: width * 0.5185185, y: height * 0.7638554))
         path.addQuadCurve(to: CGPoint(x: width * 0.33333334, y: height * 0.72096384), controlPoint: CGPoint(x: width * 0.53518516, y: height * 0.7180723))
@@ -71,7 +85,7 @@ class SnakeView: UIView {
         layer.addSublayer(shapeLayer)
         
         
-        drawScene()
+        drawScene(width: width, height: height)
         
         
     }
@@ -82,18 +96,11 @@ class SnakeView: UIView {
         self.max = max
         self.currentPosition = currentPosition
         
-        pathViewFlag = UIView(frame: CGRect(x: 0, y: 0, width: width * 0.08, height: width * 0.08))
-        //addSubview(pathViewFlag)
-        
-        pathViewCastle = UIView(frame: CGRect(x: 0, y: 0, width: width * 0.08, height: width * 0.08))
-       // addSubview(pathViewCastle)
-        
-        pathViewHourse = UIView(frame: CGRect(x: 0, y: 0, width: width * 0.08, height: width * 0.08))
-       // addSubview(pathViewHourse)
+        setNeedsDisplay()
         
     }
     
-    private func drawScene() {
+    private func drawScene(width: CGFloat, height: CGFloat) {
         
         let pathPoints = path.interpolatePointsAlongPath()
         let endPoint = pathPoints.last!
@@ -124,8 +131,8 @@ class SnakeView: UIView {
             if pointIndex == currentIndex {
                 let lineRatio = (1.0 / Double(pointsSize)) * Double(pointIndex)
                 let isFlippedPosition = isFlippedPosition(ratio: Float(lineRatio))
-                let hoursePos = getHoursePosition(ratio: lineRatio, x: point.x, y: point.y)
-                let valuePos = getValuePosition(ratio: lineRatio, x: point.x, y: point.y)
+                let hoursePos = getHoursePosition(ratio: lineRatio, x: point.x, y: point.y, width: width, height: height)
+                let valuePos = getValuePosition(ratio: lineRatio, x: point.x, y: point.y, width: width, height: height)
                 
                 
                 if currentPosition == max {
@@ -150,18 +157,20 @@ class SnakeView: UIView {
                 let flagIndex = Int(Double(pointsSize) * ratio)
                 
                 if flagIndex == pointIndex && pointIndex < pointsSize {
+
+                    let flagPoint = getFlagPoint(point: point, ratio: ratio, width: width)
                     
-                    let flagPoint = getFlagPoint(point: point, ratio: ratio)
+                   
                     
-                    callSelectorFromPressing(pos: (flagIndex, flagPoint), size: Int(width * 0.07))
-                    
-                    drawFlag(name: "flag", x: flagPoint.x, y: flagPoint.y, value: String($0))
+                    drawFlag(name: "flag", x: flagPoint.x, y: flagPoint.y, value: String($0), width: width, height: height)
                     drawPoint(color: UIColor.lightGray, x: point.x, y: point.y)
                     
                     if pointIndex <= currentIndex {
+                        callSelectorFromPressing(pos: (pointIndex, flagPoint), size: Int(width * 0.07))
                         drawPoint(color: UIColor.magentoColor, x: point.x, y: point.y)
                         drawPoint(color: UIColor.magentoColor, x: startPoint.x, y: startPoint.y)
-                        drawFlag(name: "green_flag", x: flagPoint.x, y: flagPoint.y)
+                        drawFlag(name: "green_flag", x: flagPoint.x, y: flagPoint.y, width: width, height: height)
+                        greenFlagPosition = pointIndex
                     } else if pointIndex > 0 {
                         drawPoint(color: UIColor.magentoColor, x: startPoint.x, y: startPoint.y)
                     } else if pointIndex >= max {
@@ -174,10 +183,10 @@ class SnakeView: UIView {
     
     private func callSelectorFromPressing(pos: (Int, CGPoint), size: Int) {
         if let pressed = pressingPoint {
-            print("pressed: \(pressed)")
             if pressed.x > pos.1.x && pressed.x < pos.1.x + CGFloat(size)
-                && pressed.y > pos.1.y && pressed.y < pos.1.y + CGFloat(size) {
+                && pressed.y > pos.1.y && pressed.y < pos.1.y + CGFloat(size) && pos.0 == greenFlagPosition {
                 flagSelector?(pos.0)
+                print("Hello")
                 pressingPoint = nil
             }
         }
@@ -241,7 +250,7 @@ class SnakeView: UIView {
         addSubview(castelLabel)
     }
     
-    private func drawFlag(name: String, x: CGFloat, y: CGFloat, value: String? = nil) {
+    private func drawFlag(name: String, x: CGFloat, y: CGFloat, value: String? = nil, width: CGFloat, height: CGFloat) {
         
         lazy var label: UILabel = {
             let label = UILabel()
@@ -330,7 +339,7 @@ class SnakeView: UIView {
         layer.addSublayer(cshapeLayer)
     }
     
-    private func getValuePosition(ratio: CGFloat, x: CGFloat, y: CGFloat) -> CGRect {
+    private func getValuePosition(ratio: CGFloat, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> CGRect {
         switch ratio {
         case 0.032...0.84:
             return CGRect(x: x - 20, y: y + 10, width: width * 0.08, height: height * 0.03)
@@ -341,7 +350,7 @@ class SnakeView: UIView {
         }
     }
     
-    private func getHoursePosition(ratio: CGFloat, x: CGFloat, y: CGFloat) -> CGRect {
+    private func getHoursePosition(ratio: CGFloat, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> CGRect {
         switch ratio {
         case 0.84...0.86:
             return CGRect(x: x - 40, y: y - 40, width: width * 0.08, height: width * 0.08)
@@ -369,7 +378,7 @@ class SnakeView: UIView {
         }
     }
     
-    private func getFlagPoint(point: CGPoint, ratio: CGFloat) -> CGPoint {
+    private func getFlagPoint(point: CGPoint, ratio: CGFloat, width: CGFloat) -> CGPoint {
         let size = width * 0.07
         switch ratio {
         case 0.01...0.08:
