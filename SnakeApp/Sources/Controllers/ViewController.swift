@@ -13,11 +13,17 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        snakeView.showFlags(positions: [5, 10, 15], max: 20, currentPosition: 7)
+        
+        let model = Snake.getData()
+        snakeView.showFlags(model)
+       
+//        snakeView.showFlags(positions: [5, 10, 15], max: 20, currentPosition: 17)
         snakeView.flagSelector = { pos in
             print("Pos: \(pos)")
             self.showNotification(title: "Поздравляю", message: "Вы выиграли \(pos) бандлов")

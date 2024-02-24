@@ -18,9 +18,10 @@ class SnakeView: UIView {
     private var imageViewHorse: UIImageView!
     private var pathViewHourse: UIView!
     private var hourseIsDone: Bool = false
-    private var max: Int? = nil
-    private var positions: Array<Int>? = nil
-    private var currentPosition: Int? = nil
+    private var max: Int = 0
+    private var positions: [Int] = []
+    private var snake: Snake? = nil
+    private var currentPosition: Int = 0
     private var pressingPoint: CGPoint? = nil
     private var greenFlagPosition: Int = 0
     
@@ -35,7 +36,7 @@ class SnakeView: UIView {
     
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         
-        if max != nil {
+        if max != 0 {
             pressingPoint = CGPoint(x: point.x, y: point.y)
             setNeedsDisplay()
         }
@@ -61,6 +62,7 @@ class SnakeView: UIView {
         
         pathViewHourse = UIView(frame: CGRect(x: 0, y: 0, width: width * 0.08, height: width * 0.08))
         addSubview(pathViewHourse)
+        pathViewHourse.isUserInteractionEnabled = false
         
         path.move(to: CGPoint(x: width * 0.5185185, y: height * 0.7638554))
         path.addQuadCurve(to: CGPoint(x: width * 0.33333334, y: height * 0.72096384), controlPoint: CGPoint(x: width * 0.53518516, y: height * 0.7180723))
@@ -85,20 +87,26 @@ class SnakeView: UIView {
         shapeLayer.strokeColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3).cgColor
         layer.addSublayer(shapeLayer)
         
-        
         drawScene(width: width, height: height)
-        
         
     }
     
-    func showFlags(positions: Array<Int>, max: Int, currentPosition: Int) {
+    func showFlags(_ snakeModel: Snake) {
         
-        self.positions = positions
-        self.max = max
-        self.currentPosition = currentPosition
+        self.snake = snakeModel
+        
+        if let positions = snakeModel.positionList {
+            self.positions = positions.map({ $0.position })
+        }
+        
+        self.currentPosition = snakeModel.currentPosition ?? 0
+        self.max = snakeModel.maxPosition ?? 0
+        
+        if self.currentPosition > self.max {
+            self.currentPosition = self.max
+        }
         
         setNeedsDisplay()
-        
     }
     
     private func drawScene(width: CGFloat, height: CGFloat) {
@@ -119,9 +127,6 @@ class SnakeView: UIView {
                 return
             }
             
-            guard let currentPosition = self.currentPosition else { return }
-            guard let max = self.max else { return }
-            
             let currentRatio = Double(currentPosition) / Double(max)
             let currentIndex = Int(Double(pointsSize) * currentRatio)
             
@@ -137,8 +142,11 @@ class SnakeView: UIView {
                 
                 
                 if currentPosition == max {
+                    let prize = self.snake?.positionList?.first(where: { $0.position == currentPosition })?.prize
                     isFinesh = true
+                    greenFlagPosition = currentPosition
                     drawPoint(color: UIColor.magentoColor, x: endPoint.x, y: endPoint.y)
+                    callSelectorCastle(pos: (currentPosition, endPoint), size: Int(width * 0.09), prize: prize ?? 0)
                 } else {
                     isFinesh = false
                 }
@@ -152,44 +160,89 @@ class SnakeView: UIView {
                 }
             }
             
-            positions?.forEach {
+            self.positions.forEach {
                 
                 let ratio = Double($0) / Double(max)
                 let flagIndex = Int(Double(pointsSize) * ratio)
+                
+                let pos = $0
+                
                 
                 if flagIndex == pointIndex && pointIndex < pointsSize {
 
                     let flagPoint = getFlagPoint(point: point, ratio: ratio, width: width)
                     
-                   
-                    
                     drawFlag(name: "flag", x: flagPoint.x, y: flagPoint.y, value: String($0), width: width, height: height)
                     drawPoint(color: UIColor.lightGray, x: point.x, y: point.y)
                     
                     if pointIndex <= currentIndex {
-                        callSelectorFromPressing(pos: (pointIndex, flagPoint), size: Int(width * 0.07))
+                        let prize = self.snake?.positionList?.first(where: { $0.position == pos })?.prize
                         drawPoint(color: UIColor.magentoColor, x: point.x, y: point.y)
                         drawPoint(color: UIColor.magentoColor, x: startPoint.x, y: startPoint.y)
                         drawFlag(name: "green_flag", x: flagPoint.x, y: flagPoint.y, width: width, height: height)
                         greenFlagPosition = pointIndex
-                    } else if pointIndex > 0 {
+                        if let prize = prize {
+                            callSelectorFromPressing(pos: (pointIndex, flagPoint), size: Int(width * 0.07), prize: prize)
+                        }
+                        
+                        drawStartRect(viewPosition: CGRect(x: startPoint.x - 60, y: startPoint.y + 10, width: 120, height: 45))
+                        
+                    } else if currentIndex > 0 {
                         drawPoint(color: UIColor.magentoColor, x: startPoint.x, y: startPoint.y)
-                    } else if pointIndex >= max {
-                        drawPoint(color: UIColor.magentoColor, x: endPoint.x, y: endPoint.y)
                     }
                 }
             }
         }
     }
     
-    private func callSelectorFromPressing(pos: (Int, CGPoint), size: Int) {
+    private func callSelectorCastle(pos: (Int, CGPoint), size: Int, prize: Int) {
         if let pressed = pressingPoint {
             if pressed.x > pos.1.x && pressed.x < pos.1.x + CGFloat(size)
-                && pressed.y > pos.1.y && pressed.y < pos.1.y + CGFloat(size) && pos.0 == greenFlagPosition {
-                flagSelector?(pos.0)
+                && pressed.y < pos.1.y && pressed.y < pos.1.y + CGFloat(size) && pos.0 <= greenFlagPosition {
+                flagSelector?(prize)
                 pressingPoint = nil
             }
         }
+    }
+    
+    private func callSelectorFromPressing(pos: (Int, CGPoint), size: Int, prize: Int) {
+        if let pressed = pressingPoint {
+            if pressed.x > pos.1.x && pressed.x < pos.1.x + CGFloat(size)
+                && pressed.y > pos.1.y && pressed.y < pos.1.y + CGFloat(size) && pos.0 <= greenFlagPosition {
+                flagSelector?(prize)
+                pressingPoint = nil
+            }
+        }
+    }
+    
+    private func drawStartRect(viewPosition: CGRect) {
+        
+        lazy var startLabel: UILabel = {
+            let label = UILabel()
+            label.text = "СТАРТ"
+            label.textColor = UIColor.white
+            label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+            label.textAlignment = .center
+            label.isUserInteractionEnabled = false
+            label.layer.zPosition = 1
+            return label
+        }()
+        
+        lazy var startView: UIView = {
+            let view = UIView()
+            view.backgroundColor = UIColor.magentoColor
+            view.layer.cornerRadius = 5
+            view.addSubview(startLabel)
+            view.isUserInteractionEnabled = false
+            view.layer.zPosition = -1
+            return view
+        }()
+        
+        startLabel.frame = viewPosition
+        startView.frame = viewPosition
+        
+        addSubview(startLabel)
+        addSubview(startView)
     }
     
     private func drawFirstAndLastPoint(endPoint: CGPoint, startPoint: CGPoint) {
@@ -216,6 +269,7 @@ class SnakeView: UIView {
             let imageView = UIImageView()
             imageView.image = UIImage(named: "firework")
             imageView.contentMode = .scaleAspectFill
+            imageView.layer.zPosition = 1
             return imageView
         }()
         
@@ -262,7 +316,7 @@ class SnakeView: UIView {
         let image = UIImage(named: name)!
         imageViewFlag = UIImageView(image: image)
         imageViewFlag.contentMode = .scaleAspectFill
-        
+        imageViewFlag.layer.zPosition = 1
         imageViewFlag.frame = CGRect(x: x, y: y, width: width * 0.07, height: width * 0.07)
         pathViewFlag.addSubview(imageViewFlag)
         
@@ -285,6 +339,7 @@ class SnakeView: UIView {
             let view = UIView()
             view.backgroundColor = UIColor.magentoColor
             view.layer.cornerRadius = 5
+            view.isUserInteractionEnabled = false
             return view
         }()
         
@@ -294,6 +349,7 @@ class SnakeView: UIView {
             label.textAlignment = .center
             label.textColor = UIColor.white
             label.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+            label.isUserInteractionEnabled = false
             return label
         }()
         

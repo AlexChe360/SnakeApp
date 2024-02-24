@@ -12,24 +12,44 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="SnakeApp" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                    <view key="view" contentMode="scaleToFill" ambiguous="YES" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0gZ-Xu-dS0" customClass="SnakeView" customModule="SnakeApp" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="109" width="393" height="734.66666666666663"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JIX-Na-Ke8">
+                                <rect key="frame" x="8" y="79" width="377" height="60"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="YQ8-MJ-OnY"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0gZ-Xu-dS0" customClass="SnakeView" customModule="SnakeApp" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="149" width="393" height="579"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="txd-M0-xXu">
+                                <rect key="frame" x="8" y="738" width="377" height="60"/>
+                                <color key="backgroundColor" systemColor="linkColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="VkR-9E-8Un"/>
+                                </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="0gZ-Xu-dS0" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="1kp-lH-Xer"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="0gZ-Xu-dS0" secondAttribute="bottom" constant="50" id="7NE-60-e66"/>
-                            <constraint firstItem="0gZ-Xu-dS0" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="50" id="8HQ-xE-fTj"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="0gZ-Xu-dS0" secondAttribute="trailing" id="EPh-2u-t0Y"/>
-                            <constraint firstItem="0gZ-Xu-dS0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="361:852" id="HSx-pU-ocI"/>
+                            <constraint firstItem="0gZ-Xu-dS0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="0.45" id="2sq-cj-V3y"/>
+                            <constraint firstItem="JIX-Na-Ke8" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="8" id="3US-lq-KQP"/>
+                            <constraint firstItem="txd-M0-xXu" firstAttribute="leading" secondItem="JIX-Na-Ke8" secondAttribute="leading" id="4Br-qz-gK8"/>
+                            <constraint firstItem="txd-M0-xXu" firstAttribute="trailing" secondItem="JIX-Na-Ke8" secondAttribute="trailing" id="9VK-hE-sD9"/>
+                            <constraint firstItem="0gZ-Xu-dS0" firstAttribute="top" secondItem="JIX-Na-Ke8" secondAttribute="bottom" constant="10" id="EOC-YH-KR3"/>
+                            <constraint firstItem="0gZ-Xu-dS0" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="Ekd-7j-F6F"/>
                             <constraint firstItem="0gZ-Xu-dS0" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="UG2-pS-3pl"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="txd-M0-xXu" secondAttribute="bottom" constant="20" id="gLy-nR-X1E"/>
+                            <constraint firstItem="0gZ-Xu-dS0" firstAttribute="centerX" secondItem="JIX-Na-Ke8" secondAttribute="centerX" id="iLe-CL-7fy"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="JIX-Na-Ke8" secondAttribute="trailing" constant="8" id="lN5-4p-UzD"/>
+                            <constraint firstItem="JIX-Na-Ke8" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="20" id="xEX-Ka-0mo"/>
+                            <constraint firstItem="txd-M0-xXu" firstAttribute="top" secondItem="0gZ-Xu-dS0" secondAttribute="bottom" constant="10" id="zsc-th-OVd"/>
                         </constraints>
                     </view>
                     <connections>
@@ -42,6 +62,9 @@
         </scene>
     </scenes>
     <resources>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

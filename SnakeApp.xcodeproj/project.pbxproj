@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8AED12312B7F4309005EF378 /* Snake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AED12302B7F4309005EF378 /* Snake.swift */; };
 		8AF9B4E62B73EFCB002750B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF9B4E52B73EFCB002750B5 /* AppDelegate.swift */; };
 		8AF9B4E82B73EFCB002750B5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF9B4E72B73EFCB002750B5 /* SceneDelegate.swift */; };
 		8AF9B4EA2B73EFCB002750B5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF9B4E92B73EFCB002750B5 /* ViewController.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8AED12302B7F4309005EF378 /* Snake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snake.swift; sourceTree = "<group>"; };
 		8AF9B4E22B73EFCB002750B5 /* SnakeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnakeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AF9B4E52B73EFCB002750B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8AF9B4E72B73EFCB002750B5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -45,6 +47,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8AED122F2B7F42F5005EF378 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8AED12302B7F4309005EF378 /* Snake.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		8AF9B4D92B73EFCB002750B5 = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +93,7 @@
 		8AF9B4FA2B73EFE8002750B5 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				8AED122F2B7F42F5005EF378 /* Models */,
 				8AF9B5002B73F0AF002750B5 /* Extensions */,
 				8AF9B4FE2B73F093002750B5 /* Views */,
 				8AF9B4FD2B73F08A002750B5 /* Controllers */,
@@ -206,6 +217,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AED12312B7F4309005EF378 /* Snake.swift in Sources */,
 				8AF9B4EA2B73EFCB002750B5 /* ViewController.swift in Sources */,
 				8AF9B5062B73F15C002750B5 /* UIColor+Extensions.swift in Sources */,
 				8AF9B5042B73F126002750B5 /* CGPoint+Extensions.swift in Sources */,
